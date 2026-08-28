@@ -1,5 +1,7 @@
 package regulus.util;
 
+import java.nio.charset.Charset;
+
 /**
  *    BIG5 區段，參考 <a href="https://www.cns11643.gov.tw/pageView.jsp?ID=9">...</a>。<br>
  *    <br>
@@ -47,22 +49,21 @@ public class Big5Block {
         } else if (upperBound_Decimal - lowerBound_Decimal == 0) {
             this.size = 1;
         } else {
-            this.size = upperBound_Decimal - lowerBound_Decimal;
+            this.size = calculateSize(this.lowerBound_Decimal, this.upperBound_Decimal);
         }
         this.byteArrays = new byte[this.size][2];
 
         int currentBig5CodePoint = lowerBound_Decimal;
         for (int i = 0; i < byteArrays.length; i++) {
             byteArrays[i] = big5CodePointAsBytes(currentBig5CodePoint);
-            currentBig5CodePoint++;
+            currentBig5CodePoint = getNextBig5CodePoint(currentBig5CodePoint);
         }
     }
 
     private static byte[] big5CodePointAsBytes(int cpDecimal) {
-        String cpHex = Integer.toHexString(cpDecimal);
-        if (cpHex.length() != 4) throw new RuntimeException("Big5 碼位格式不對");
-        String[] hexPair = new String[] {cpHex.substring(0, 2), cpHex.substring(2, 4)};
-        return Utils.hexArrayToByteArray(hexPair);
+        byte high = (byte) ((cpDecimal >> 8) & 0xFF);
+        byte low = (byte) (cpDecimal & 0xFF);
+        return new byte[] { high, low };
     }
 
     public String name() { return name; }
@@ -81,4 +82,34 @@ public class Big5Block {
         if (byteArrays[i] == null) return null;
         return byteArrays[i].clone();
     }
+
+    private static int calculateSize(int start, int end) {
+        int count = 0;
+        int curr = start;
+        while (curr <= end) {
+            count++;
+            curr = getNextBig5CodePoint(curr);
+        }
+        return count;
+    }
+
+    private static int getNextBig5CodePoint(int current) {
+        int high = (current >> 8) & 0xFF;
+        int low = current & 0xFF;
+
+        low++;
+
+        // 跳過 0x7F
+        if (low == 0x7F) {
+            low = 0xA1;
+        }
+        // 低位元組超過 0xFE，高位元組進位
+        else if (low > 0xFE) {
+            low = 0x40;
+            high++;
+        }
+
+        return (high << 8) | low;
+    }
+
 }

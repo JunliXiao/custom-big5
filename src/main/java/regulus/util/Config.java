@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 
 public class Config {
 
-	private static final String root_dir = "F:/mapping_data";
+	private static final String root_dir = "E:/frank.hsiao/my-big5/mapping_data";
 
 	/** 存放 BU_A 專屬的難字對映 **/
 	public static final Path DIFFICULT_WORDS_A_PATH =

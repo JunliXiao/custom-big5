@@ -61,21 +61,26 @@ public class SomeResearchTest {
 
     @Test
     public void simple() {
-        Charset cs_A = MyBig5CharsetProvider.charsetForBU('A');
-//		Charset cs_A = Charset.forName("MS950");
-        byte[] dw_1_buA_byteArr = Utils.hexArrayToByteArray(new String[] {"A3","E1"});
-        String dw_1 = new String(dw_1_buA_byteArr, cs_A);
-        System.out.println(dw_1 + "<- BIG5 自造字對映到 UTF8 自造字");
+//        Charset cs_1 = MyBig5CharsetProvider.charsetForBU('A');
+        Charset cs_1 = Charset.forName("BIG5");
+        Charset cs_2 = MyBig5CharsetProvider.charsetForBU('A');
+
+        String highSurrogate = "FA";
+        String lowSurrogate = "41";
+        byte[] dw_1_buA_byteArr = Utils.hexArrayToByteArray(new String[] {highSurrogate,lowSurrogate});
+        String dw_1 = new String(dw_1_buA_byteArr, cs_1);
+        System.out.println(cs_1 + " decoding " + highSurrogate + lowSurrogate + " -> " + dw_1);
+
+        byte[] dw_2_buA_byteArr = Utils.hexArrayToByteArray(new String[] {highSurrogate,lowSurrogate});
+        String dw_2 = new String(dw_2_buA_byteArr, cs_2);
+        System.out.println(cs_2 + " decoding " + highSurrogate + lowSurrogate + " -> " + dw_2);
 
         String dw_1_hexStr = Utils.fromCharToHex('').toUpperCase();
         System.out.println("dw_1_hexStr: " + dw_1_hexStr);
 
-        byte[] dw_2_buA_byteArr = Utils.hexArrayToByteArray(new String[] {"81","46"});
-        String dw_2 = new String(dw_2_buA_byteArr, cs_A);
-        System.out.println(dw_2 + "<- BIG5: 8146");
-        char[] dw_2_charArr = dw_2.toCharArray();
-        String dw_2_hexStr = Utils.fromCharToHex(dw_2_charArr[0]).toUpperCase();
-        System.out.println("dw_2_hexStr: " + dw_2_hexStr);
+//        char[] dw_2_charArr = dw_2.toCharArray();
+//        String dw_2_hexStr = Utils.fromCharToHex(dw_2_charArr[0]).toUpperCase();
+//        System.out.println("dw_2_hexStr: " + dw_2_hexStr);
     }
 
     @Test
