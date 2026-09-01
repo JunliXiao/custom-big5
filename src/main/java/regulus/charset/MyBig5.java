@@ -47,7 +47,7 @@ public class MyBig5 extends Charset {
 	
 	public static void main(String[] args) throws CharacterCodingException {
 		MyBig5 ba = new MyBig5('A');
-		
+
 //		char[] uni_charPair = "𨳝".toCharArray();		
 //		System.out.println(uni_charPair.length);
 //		CharsetEncoder encoder = ba.newEncoder(); 
@@ -93,11 +93,21 @@ public class MyBig5 extends Charset {
     	return myBig5.businessUnit() == this.bu;
     }
 
+	/**
+	 * JDK 通用 API 路徑：new String(bytes, charset), new String(bytes, charsetName) <br>
+	 * 這些用法若有大量呼叫的情況，則會建構出大量的 MyDoubleByte.Decoder 物件。
+	 * @return
+	 */
     public CharsetDecoder newDecoder() {
         initb2c(this);
         return new MyDoubleByte.Decoder(this, b2c, b2cSB, b2Min, b2Max, dw_b2ncMap);
     }
 
+	/**
+	 * JDK 通用 API 路徑：String.getBytes(charset), String.getBytes(charsetName) <br>
+	 * 這些用法若有大量呼叫的情況，則會建構出大量的 MyDoubleByte.Encoder 物件。
+	 * @return
+	 */
     public CharsetEncoder newEncoder() {
         initc2b(this);
         return new MyDoubleByte.Encoder(this, c2b, c2bIndex, dw_c2bMap, dw_nc2bMap);
