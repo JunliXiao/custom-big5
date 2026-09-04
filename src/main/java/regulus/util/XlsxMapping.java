@@ -138,7 +138,7 @@ public class XlsxMapping {
 		
 		Sheet sheet = wb.getSheetAt(0);
 		// RowNum is 0-based, but skipping 0 to skip header 
-		for (int i = 1; i < sheet.getLastRowNum(); i++) {
+		for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 			Row row = sheet.getRow(i);
 			String big5Code = "";
 			String utf16Code = "";
@@ -206,7 +206,7 @@ public class XlsxMapping {
     		String uni_hex = entry.getValue();
     		
 			if (uni_hex.length() == 5) {
-    			// Out of UTF-16 range
+    			// Out of Unicode BMP range
     			String uni_hex_lowerCase = Utils.fromHexToBytesHexDB(uni_hex);
     			byte highByte = Utils.hexToSignedByte(big5_hex.substring(0, 2));
     			byte lowByte = Utils.hexToSignedByte(big5_hex.substring(2, 4));
@@ -214,7 +214,7 @@ public class XlsxMapping {
     			
     			nc2bMap_bu.put(uni_hex_lowerCase, big5_bytes);
     		} else {
-    			// Within UTF-16 range
+    			// Within Unicode BMP range
     			Character uni_ch = Utils.fromHexToCharSB(uni_hex);
     			Character big5_ch = Utils.fromHexToCharSB(big5_hex);
     			
